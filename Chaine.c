@@ -1,12 +1,16 @@
-#ifndef __CHAINE_C__
-#define __CHAINE_ C__	
-#include<stdio.h>
-
-include "Chaine.h"
+#ifndef CHAINE_C
+#define CHAINE_C
 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Chaine.h"
 
-#endif 
+
+#endif
+
+#define TAILLE_MAX 200
 
 
 /*************************  FONCTIONS STRUCTURE CellPoint ***************************************************************/
@@ -17,7 +21,7 @@ include "Chaine.h"
 
 /* initialise et crée une structure CellPoint */
 
-CellPoint* initialise_CP(double x, double y)
+CellPoint* initialiser_CP(double x, double y)
 {
 	CellPoint* CP=(CellPoint*)malloc(sizeof(CellPoint));
 
@@ -42,7 +46,7 @@ CellPoint* initialise_CP(double x, double y)
 
 /* initialise une structure CellChaine */
 
-CellChaine* initialise_CC(int num)
+CellChaine* initialiser_CC(int num)
 {
 	CellChaine* CC=malloc(sizeof(CellChaine));	
 	
@@ -66,20 +70,17 @@ CellChaine* initialise_CC(int num)
 
 /* initialise une structure Chaines */
 
-Chaines* initialiser_C(Chaines* C)
+Chaines* initialiser_C(int gamma, int nbChaines)
 {
-	(*C) = (Chaines *) malloc(sizeof(Chaines) );
+	Chaines *C = (Chaines *) malloc(sizeof(Chaines));
+	if(C==NULL)return NULL;
 	
-	C->gamma = 0;
-	C->nbChaines = 0;
+	C->gamma = gamma;
+	C->nbChaines = nbChaines;
 	C->chaines = NULL;
+
+	return C;
 }
-
-
-
-
-
-
 
 
 
@@ -90,7 +91,7 @@ Chaines* initialiser_C(Chaines* C)
 
 /* Insère CellPoint dans CellChaine */
 
-CellChaines* inserer_CP_CC(CellChaines *CC, CellPoint *CP)
+CellChaine* inserer_CP_CC(CellChaine *CC, CellPoint *CP)
 {
 	if( CC!=NULL){
 		
@@ -108,8 +109,8 @@ CellChaines* inserer_CP_CC(CellChaines *CC, CellPoint *CP)
 
 CellPoint* inserer_CP_lCP( CellPoint* lCP, CellPoint *CP)
 {
-	if(lCP=NULL && CP=NULL) return NULL;
-	if(lCP=NULL) return CP;
+	if(lCP==NULL && CP==NULL) return NULL;
+	if(lCP==NULL) return CP;
 
 	CellPoint* SAVE_lCP = lCP;
 
@@ -126,9 +127,8 @@ CellPoint* inserer_CP_lCP( CellPoint* lCP, CellPoint *CP)
 	if(prec!=NULL){
 
 		prec->suiv = CP;
-		return SAVE_lCP;
 	}
-
+	return SAVE_lCP;
 } 
 
 
@@ -158,10 +158,10 @@ Chaines* inserer_CC_C(Chaines *C, CellChaine *CC)
 
 CellChaine* inserer_CC_lC( CellChaine* lC, CellChaine *CC)
 {
-	if(lC=NULL && CP=NULL) return NULL;
-	if(lCP=NULL) return CC;
+	if(lC==NULL && CC==NULL) return NULL;
+	if(lC==NULL) return CC;
 
-	CellPoint* SAVE_lC = lC;
+	CellChaine* SAVE_lC = lC;
 
 	CellChaine* prec = lC;
 	lC = lC->suiv;	
@@ -176,8 +176,10 @@ CellChaine* inserer_CC_lC( CellChaine* lC, CellChaine *CC)
 	if(prec!=NULL){
 
 		prec->suiv = CC;
-		return SAVE_lC;
 	}
+	
+	return SAVE_lC;
+	
 } 
 
 
@@ -194,7 +196,71 @@ CellChaine* inserer_CC_lC( CellChaine* lC, CellChaine *CC)
 
 Chaines* lectureChaine(FILE *f)
 { 
+	int nbChaines;
+	fscanf(f,"%d", &nbChaines);
+	int gamma;
+	fscanf(f,"%d", &gamma);
+	Skip(f);
+	
+	Chaines *C = initialiser_C(gamma,nbChaines);
+	char buff[TAILLE_MAX];	
 
+	int numero;
+	int nbPoints;
+	double xP, yP;
+	
+	CellChaine* CC;
+	CellPoint* CP;	
+	
+	int i;
+	
+	do{
+		GetChaine(f,TAILLE_MAX,buff);
+		
+		fscanf(f,"%d %d", &numero, &nbPoints);	
+		CC=initialiser_CC(numero);
+
+		for(i=0; i<nbPoints; i++)
+		{
+			fscanf(f,"%lf %lf", &xP, &yP);
+			CP=initialiser_CP(xP, yP);
+			CC=inserer_CP_CC(CC, CP);
+		}
+	
+	C=inserer_CC_C(C,CC);
+
+	}while(buff != NULL);
+
+	return C;
+}
+
+void ecrireChaineTxt(Chaines *C, FILE *f)
+{
+	fprintf(f,"NbChain: %d\n", C->nbChaines);
+	fprintf(f,"Gamma: %d\n\n", C->gamma);
+	
+	CellChaine* cour=C->chaines;
+
+	int nbPoints=0;
+	char buff[TAILLE_MAX];	
+
+	while(cour)
+	{
+		fprintf(f, "%d", cour->numero);
+		
+		CellPoint* cour2=cour->points;
+		while(cour2){
+			sprintf(buff,"%f %f", cour2->x, cour2->y);
+			nbPoints++;
+			cour2=cour2->suiv;			
+		}
+
+		fprintf(f,"%d %s",nbPoints, buff);
+		nbPoints=0;
+		memset(buff, 0, sizeof (buff));//vide la chaine de caractères buff
+		cour=cour->suiv;
+	}
 	
 
 }
+
