@@ -3,7 +3,7 @@
 
 #include<stdio.h>
 #include "entree_sortie.h"
-
+#include "SVGwriter.h"
 
 /* Liste chainee de points */
 typedef struct cellPoint{

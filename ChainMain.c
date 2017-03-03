@@ -20,7 +20,10 @@ int main(int argc, char* argv[])
 	FILE *f, *g;
 
 	f = fopen(nomfic_1,"r");
+
 	Chaines* C;	
+	
+	printf("OK1\n");	
 
 	if(f!=NULL){
 		C=lectureChaine(f);
@@ -28,14 +31,15 @@ int main(int argc, char* argv[])
 	}
 
 	g = fopen(nomfic_2,"w");
+	printf("OK2\n");
 
-	if(f!=NULL){
-		ecrireChaineTxt(C, f);
+	if(g!=NULL){
+		ecrireChaineTxt(C, g);
 		fclose(g);
 	}
 	
 	
-
+	printf("ooooooooooooooooooo");
 	return 0;
 
 }

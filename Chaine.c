@@ -1,16 +1,20 @@
-#ifndef CHAINE_C
-#define CHAINE_C
+
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "Chaine.h"
 
 
-#endif
 
-#define TAILLE_MAX 200
+
+#define TAILLE_MAX 500
+#define TAILLE_MIN 50
+
+#define IMAGE_X 300
+#define IMAGE_Y 300
 
 
 /*************************  FONCTIONS STRUCTURE CellPoint ***************************************************************/
@@ -19,6 +23,7 @@
 
 
 
+					
 /* initialise et crée une structure CellPoint */
 
 CellPoint* initialiser_CP(double x, double y)
@@ -66,6 +71,7 @@ CellChaine* initialiser_CC(int num)
 
 
 
+			
 
 
 /* initialise une structure Chaines */
@@ -88,6 +94,7 @@ Chaines* initialiser_C(int gamma, int nbChaines)
 /*************************  FONCTIONS STRUCTURE CellPoint et CellChaine ***************************************************************/
 
 
+			
 
 /* Insère CellPoint dans CellChaine */
 
@@ -196,14 +203,21 @@ CellChaine* inserer_CC_lC( CellChaine* lC, CellChaine *CC)
 
 Chaines* lectureChaine(FILE *f)
 { 
-	int nbChaines;
-	fscanf(f,"%d", &nbChaines);
-	int gamma;
-	fscanf(f,"%d", &gamma);
-	Skip(f);
-	
-	Chaines *C = initialiser_C(gamma,nbChaines);
 	char buff[TAILLE_MAX];	
+	GetChaine(f,TAILLE_MAX, buff);
+	int nbChaines=GetEntier(f);
+	printf("lc1\n");
+	GetChaine(f,TAILLE_MAX, buff);	
+	int gamma=GetEntier(f);
+	//GetChaine(f,TAILLE_MAX, buff);	
+	//fscanf(f,"%d", &gamma);
+
+	printf("lc2\n");
+	SkipLine(f);
+
+	printf("lc3\n");
+
+	Chaines *C = initialiser_C(gamma,nbChaines);	
 
 	int numero;
 	int nbPoints;
@@ -212,24 +226,36 @@ Chaines* lectureChaine(FILE *f)
 	CellChaine* CC;
 	CellPoint* CP;	
 	
+	int cpt;
 	int i;
+	printf("lc4\n");
 	
-	do{
-		GetChaine(f,TAILLE_MAX,buff);
-		
-		fscanf(f,"%d %d", &numero, &nbPoints);	
-		CC=initialiser_CC(numero);
+	for(cpt=0; cpt<nbChaines; cpt++){
+	
+		numero = GetEntier(f); 
+		nbPoints = GetEntier(f); 
+		printf("lc4.1\n");
 
+		
+
+		CC=initialiser_CC(numero);
+		printf("lc4.2\n");
 		for(i=0; i<nbPoints; i++)
 		{
-			fscanf(f,"%lf %lf", &xP, &yP);
+			
+			xP = GetReel(f);
+			yP = GetReel(f);
+			
+			printf("lc4.3\n");
 			CP=initialiser_CP(xP, yP);
 			CC=inserer_CP_CC(CC, CP);
+			printf("lc4.4\n");
 		}
 	
+	printf("lc5\n");
 	C=inserer_CC_C(C,CC);
 
-	}while(buff != NULL);
+	}
 
 	return C;
 }
@@ -243,24 +269,144 @@ void ecrireChaineTxt(Chaines *C, FILE *f)
 
 	int nbPoints=0;
 	char buff[TAILLE_MAX];	
+	char buff1[TAILLE_MIN];
+
+	memset(buff, 0, sizeof (buff));
+	memset(buff1, 0, sizeof (buff1));
 
 	while(cour)
 	{
-		fprintf(f, "%d", cour->numero);
+		fprintf(f, "%d ", cour->numero);
 		
 		CellPoint* cour2=cour->points;
 		while(cour2){
-			sprintf(buff,"%f %f", cour2->x, cour2->y);
+			sprintf(buff1,"%.2f %.2f ", cour2->x, cour2->y);
+			//sprintf(buff1,"%2f %2f ", cour2->x, cour2->y);
+			strcat(buff, buff1);
 			nbPoints++;
 			cour2=cour2->suiv;			
 		}
+				
 
-		fprintf(f,"%d %s",nbPoints, buff);
+		fprintf(f,"%d %s \n",nbPoints, buff);
 		nbPoints=0;
-		memset(buff, 0, sizeof (buff));//vide la chaine de caractères buff
+		memset(buff, 0, sizeof (buff));
+		memset(buff1, 0, sizeof (buff1));//vide la chaine de caractères buff
 		cour=cour->suiv;
 	}
 	
 
+}
+
+void afficheChaineSVG(Chaines *C, char* nomInstance){
+
+	SVGwriter* svg;
+	SVGinit(svg, nomInstance, IMAGE_X, IMAGE_Y);
+	
+	//pour créer une ligne avec SVG on a besoin de 2 points, donc on stocke les coordonnées du point précédent
+	//->pour pouvoir créer la ligne avec le point courant 
+
+	CellPoint *suiv = NULL;
+
+	CellChaine* cour=C->chaines;
+
+	while(cour){
+
+		CellPoint* cour2=cour->points;
+
+		if(cour2!=NULL){
+
+			SVGpoint(svg, cour2->x, cour2->y); // on crée le premier point
+		
+		}
+
+		CellPoint *prec = cour2;
+		cour2 = cour2->suiv;
+
+		while(cour2){
+
+			SVGpoint(svg, cour2->x, cour2->y); // on crée le point suivant prec
+			SVGline(svg, prec->x, prec->y, cour2->x, cour2->y); // on crée la ligne : le segment
+			
+			prec = cour2;
+			cour2=cour2->suiv;
+
+		}
+
+		cour=cour->suiv;
+	}
+
+}
+
+double longueurChaine(CellChaine *c)
+{
+
+	if( c->points == NULL) return 0;
+
+	double longChaine=0;
+
+	CellPoint *prec = c->points;
+	CellPoint* cour = prec->suiv;
+	
+	while(cour)
+	{
+		
+		longChaine += sqrt(pow(prec->x-cour->x,2)+pow(prec->y-cour->y,2));
+		prec = cour;	
+		cour=cour->suiv;
+	}
+
+	return longChaine;
+}
+
+double longueurTotale(Chaines* C)
+{
+	double longTotale=0;
+
+	CellChaine* cour = C->chaines;
+
+	while(cour)
+	{
+		longTotale += longueurChaine(cour);
+		cour=cour->suiv;
+	}
+
+	return longTotale;
+
+}
+
+int comptePoints(CellChaine* CC)
+{
+	int nbPoints = 0;
+	
+	if(CC->points == NULL) return nbPoints;
+
+	CellPoint *cour = CC->points;
+
+	while(cour){
+
+		nbPoints += 1;
+		cour = cour->suiv;
+	}
+
+	return nbPoints;
+
+}
+
+int comptePointsTotal(Chaines *C)
+{
+	int nbPointsTotal = 0;
+
+	if(C==NULL) return nbPointsTotal;
+
+	CellChaine * cour = C->chaines;
+
+	while(cour){
+
+		nbPointsTotal += comptePoints(cour);
+		cour=cour->suiv;
+	}
+	
+	return nbPointsTotal;
 }
 
