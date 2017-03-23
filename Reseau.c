@@ -2,38 +2,62 @@
 #include <stdio.h>
 #include "Reseau.h"
 
+unsigned static int NUM = 1;
+
 /********** FONCTIONS Noeud *************************************/
 
-Noeud* initialiser_noeud(int num, double x, double y)
+Noeud* initialiser_Noeud(double x, double y)
 {
 
-	Noeud* n = (Noeud*)malloc(sizeof(Noeud));
+	Noeud* N = (Noeud*)malloc(sizeof(Noeud));
 
-	if(n==NULL)return NULL;
+	if(N==NULL)return NULL;
 
-	n->num=num;
-	n->x=x;
-	n->y=y;
-	n->voisins=NULL;
-			
+	N->num=NUM;
+	NUM++;
+
+	N->x=x;
+	N->y=y;
+
+	N->voisins = initialiser_CellNoeud();
+	if(n->voisins==NULL) return NULL;	
+		
 	return n;
 }
 
-
-
 /******* FONCTIONS CellNoeud ******************************************/
 
-CellNoeud* initialiser_cellNoeud()
+CellNoeud* initialiser_CellNoeud()
 {
-	CellNoeud *cn = (CellNoeud*)malloc(sizeof(CellNoeud));
+	CellNoeud *CN = (CellNoeud*)malloc(sizeof(CellNoeud));
+	
+	if(CN==NULL) return NULL;
 
-	cn->nd = NULL;
-	cn->suiv = NULL;
+	CN->nd = NULL;
+	CN->suiv = NULL;
+	return CN;
 }
+
+CellNoeud* creer_cellNoeud(Noeud *N)
+{
+	CellNoeud *CN = initialiser_cellNoeud();
+	Cn->nd = N;
+	return CN;
+}
+
+/* compte le nombre des voisins d'un noeud */
+int compteNbVoisins(CellNoeud *CN)
+{
+	if(CN->nd== NULL) return 0;
+	
+	return 1 + compteNbVoisins(CN->suiv)+compteNbVoisins(CN->nd->voisins);
+
+}
+
 
 /******* FONCTIONS COMMODITES ******************************************/
 
-CellCommodite* initialiser_cellCommodite(Noeud* N1, Noeud* N2)
+CellCommodite* initialiser_CellCommodite(Noeud* N1, Noeud* N2)
 {
 
 	CellCommodite* cc = (CellCommodite*)malloc(sizeof(CellCommodite));
@@ -49,13 +73,13 @@ CellCommodite* initialiser_cellCommodite(Noeud* N1, Noeud* N2)
 
 /******* FONCTIONS Reseau ******************************************/
 
-Reseau* initialiser_reseau(int nbNoeuds, int gamma)
+Reseau* initialiser_Reseau(int gamma, int num)
 {
 	Reseau* r = (Reseau*)malloc(sizeof(Reseau));
 
 	if(r==NULL)return NULL;
 
-	r->nbNoeuds = nbNoeuds;
+	r->nbNoeuds = num;
 	r->gamma = gamma;
 	r->noeuds = NULL;
 	r->commodites = NULL;
@@ -63,71 +87,187 @@ Reseau* initialiser_reseau(int nbNoeuds, int gamma)
 	return r;
 }
 
-//insérer un Noeud dans un CellNoeud
-void inserer_CN_N(CellNoeud* CN, Noeud* N)
+/************* insérer un Noeud dans un CellNoeud ************/
+
+CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 {
+	CellNoeud *B = NULL;
 
 	if(CN->nd==NULL){
 
-		CN->nd=N;
-		return;
+		B = creer_CellNoeud( initialiser_Noeud(x,y) );
+		CN->nd=B;
+		return CN;
 		
 	}
-	
-		CellNoeud* cour=CN;
-		
-		while(cour->suiv){
-			cour=cour->suiv;
-		}
-		cour->nd->voisins->suiv=cour;
-		cour->nd=N;
+
+	B = recherche_CN_N(CN, x, y);
+
+	if(B==NULL){
+
+		B = creer_CellNoeud( initialiser_Noeud(x,y) );
+		B->suiv = CN;
+		return B;
 	}
+
+	printf("\nNoeud déjà stocké\n");
+	return CN;
 
 }
 
-void inserer_lCN_CN(CellNoeud* lCN, CellNoeud* CN)
+CellCommodite* inserer_RCom_Com(CellCommodite *RCom, CellCommodite *Com)
 {
-	if(lCN==NULL)
-	{
-		lCN=CN;	
-	}
-	else
-	{
-		N->voisins->suiv=CN;
-		CN->nd=N;
-	}
+	Com->suiv =RCom;
+	return Com;
+
 }
 
-void inserer_R_CN(Reseau* R, CellNoeud* CN){
+
+/**** Recherche : Les fonctions ******/
+
+Noeud* recherche_CN_N(CellNoeud *CN, double x, double y)
+{
+
 	
-	if(R->noeuds==NULL)R->noeuds=CN;
-	else{
-		CN->suiv=noeuds;
-		noeuds=CN;
+	Noeud *B = NULL;
+	
+	while(CN){
+		
+		B = recherche_N_N(CN->nd, x, y);
+		if(B!=NULL) return B;
+		
+		CN = CN->suiv;
+	
 	}
+	
+	return B;
 }
 
-Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y){
-	CellNoeud* cour=R->noeuds;
+Noeud* recherche_N_N(Noeud N, double x, double y)
+{
+	while(N){
 
-	while(cour){
-		if(cour->nd->x==x && cour->nd->y==y){
-			return cour->nd;
+		if(N==NULL) return NULL;
+
+		if(N->x==x && N->y==y){
+
+			printf("\nNoeud trouvé\n");
+			return CN->nd;
 		}
 
-	cour=cour->suivant;
+		recherche_CN_N(N->voisins, x, y);	
 	}
-
-	Noeud* N=initialiser_noeud(R->nbNoeuds+1, x, y);
-	CellNoeud* CN=initialiser_cellNoeud(N);
-	inserer_R_CN(R,CN);
-	
-	R->nbNoeuds++;
-
-	return N;
 }
 
-Reseau* reconstitueReseauListe(Chaines* C){
-	int nbPointsTotal=0;	
+Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y)
+{
+	Noeud* B = recherche_CN_N(R->noeuds, x, y);
+
+	if(B!=NULL) return B;
+
+	CellNoeud *C = creer_CellNoeud( initialiser_Noeud(x, y) );
+	C->suiv = R->noeuds
+
+	R->nbNoeuds=NUM-1;
 	
+	printf("\nNoeud créé \n");
+	return C->nd;
+}
+
+/******* Reconstitution : Fonctions **************/
+ 
+Reseau* reconstitueReseauListe(Chaines* C)
+{
+	Reseau *R = initialiser_Reseau(C->gamma, comptePointsTotal(C));
+
+	CellChaine *CC = C->chaines;
+	CellPoint *CP = CC->points;
+	CellPoint *CP_voisins = CP->suiv;
+
+	while(CC){
+			
+		
+		CellNoeud *N;
+
+		if(CP!=NULL){
+
+			 Noeud *R = recherche_CN_N(R->noeuds, CP->x, CP->y);
+
+			 if(R==NULL){
 	
+				N = creer_CellNoeud( initialiser_Noeud( CP->x, CP->y) );
+				
+				CellNoeud* extrA = N; // sauvegarde du premier point
+				CP = CP->suiv;				
+		
+				while(CP){
+	
+					N->nd->voisins = inserer_CN_N( N->nd->voisins, CP->x, CP->y );
+
+					N = N->nd->voisins;
+
+					CP= CP->suiv;
+				}
+		
+				extrA->suiv = R->noeuds;
+				R->noeuds = extrA;
+				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extrA->nd, N->nd);
+
+			}else{
+				Noeud* extr = R;
+				CP = CP->suiv;				
+		
+				while(CP){
+	
+					R->voisins = inserer_CN_N( R->voisins, CP->x, CP->y );
+
+					N = R->voisins;
+
+					CP= CP->suiv;
+				}
+		
+				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extr, N->nd);
+			  }
+   		}
+
+		CC = CC->suiv;
+
+	}
+
+	return R;
+}
+
+/* compte le nombre de commodités */
+
+int nbCommodite(Reseau *R)
+{
+	int nbCom = 0;
+
+	CellCommodite *Com = R->commodites;
+
+	while(Com){
+
+		nbCom++;
+		Com = Com->suiv;
+	}
+
+	return nbCom;
+
+}
+
+/* compte le nombre des liaisons */
+
+int nbLiaison(Reseau *R)
+{
+	int nbLiaison = 0;
+
+	while(R->noeuds != NULL){
+
+		nbLiaison += compteNbVoisins(R->noeuds);
+		R->noeuds = R->noeuds->suiv;
+
+	}
+
+
+}
+

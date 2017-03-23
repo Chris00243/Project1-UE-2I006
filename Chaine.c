@@ -29,12 +29,28 @@
 CellPoint* initialiser_CP(double x, double y)
 {
 	CellPoint* CP=(CellPoint*)malloc(sizeof(CellPoint));
+	
+	if(CP==NULL) return NULL;	
 
 	CP->x=x;
 	CP->y=y;
 	CP->suiv=NULL;
 
 	return CP;
+}
+
+/* Affiche une structure CellPoint */
+
+void afficher_CP( CellPoint *CP)
+{	
+	while(CP){
+
+		printf("CellPoint (x = %.2f | y = %.2f) ==> ",CP->x,CP->y);
+		CP = CP->suiv;
+	
+	}
+	
+	printf(" NULL" );
 }
 
 
@@ -60,6 +76,24 @@ CellChaine* initialiser_CC(int num)
 	CC->suiv=NULL;
 
 	return CC;
+}
+
+/* affiche une structure CellChaine */
+
+void afficher_CC( CellChaine *CC)
+{
+	
+
+	while(CC){
+		
+		printf("[ CellChaine numéro : %d NbPoints : %d  ", CC->numero, comptePoints(CC) );
+		afficher_CP(CC->points);
+		printf(" ] ====> \n");	
+		
+		CC = CC->suiv;
+	}
+
+	printf(" NULL" );
 }
 
 
@@ -88,7 +122,20 @@ Chaines* initialiser_C(int gamma, int nbChaines)
 	return C;
 }
 
+/* affiche une structure Chaines */
 
+void afficher_C( Chaines *C)
+{	
+	printf("\n\n Chaines : {  ");
+	if(C!=NULL){
+
+		printf("\n\n\tgamma : %d  nbChaines : %d nbPointsTotal : %d\n\n", C->gamma, C->nbChaines, comptePointsTotal(C) );
+		afficher_CC(C->chaines);
+	}
+	
+	printf("\n\n\t } =====> FIN\n"); 
+
+}
 
 
 /*************************  FONCTIONS STRUCTURE CellPoint et CellChaine ***************************************************************/
@@ -206,16 +253,16 @@ Chaines* lectureChaine(FILE *f)
 	char buff[TAILLE_MAX];	
 	GetChaine(f,TAILLE_MAX, buff);
 	int nbChaines=GetEntier(f);
-	printf("lc1\n");
+	
 	GetChaine(f,TAILLE_MAX, buff);	
 	int gamma=GetEntier(f);
 	//GetChaine(f,TAILLE_MAX, buff);	
 	//fscanf(f,"%d", &gamma);
 
-	printf("lc2\n");
+	
 	SkipLine(f);
 
-	printf("lc3\n");
+	
 
 	Chaines *C = initialiser_C(gamma,nbChaines);	
 
@@ -228,31 +275,27 @@ Chaines* lectureChaine(FILE *f)
 	
 	int cpt;
 	int i;
-	printf("lc4\n");
+	
 	
 	for(cpt=0; cpt<nbChaines; cpt++){
 	
 		numero = GetEntier(f); 
 		nbPoints = GetEntier(f); 
-		printf("lc4.1\n");
-
-		
 
 		CC=initialiser_CC(numero);
-		printf("lc4.2\n");
+		
 		for(i=0; i<nbPoints; i++)
 		{
 			
 			xP = GetReel(f);
 			yP = GetReel(f);
 			
-			printf("lc4.3\n");
+			
 			CP=initialiser_CP(xP, yP);
 			CC=inserer_CP_CC(CC, CP);
-			printf("lc4.4\n");
+			
 		}
-	
-	printf("lc5\n");
+
 	C=inserer_CC_C(C,CC);
 
 	}
@@ -279,9 +322,11 @@ void ecrireChaineTxt(Chaines *C, FILE *f)
 		fprintf(f, "%d ", cour->numero);
 		
 		CellPoint* cour2=cour->points;
+
 		while(cour2){
+
 			sprintf(buff1,"%.2f %.2f ", cour2->x, cour2->y);
-			//sprintf(buff1,"%2f %2f ", cour2->x, cour2->y);
+			
 			strcat(buff, buff1);
 			nbPoints++;
 			cour2=cour2->suiv;			
@@ -289,18 +334,24 @@ void ecrireChaineTxt(Chaines *C, FILE *f)
 				
 
 		fprintf(f,"%d %s \n",nbPoints, buff);
+
 		nbPoints=0;
-		memset(buff, 0, sizeof (buff));
-		memset(buff1, 0, sizeof (buff1));//vide la chaine de caractères buff
+		memset(buff, 0, sizeof (buff));	   //vide la chaine de caractères buff
+		memset(buff1, 0, sizeof (buff1)); //vide la chaine de caractères buff1
+
 		cour=cour->suiv;
 	}
-	
-
 }
 
 void afficheChaineSVG(Chaines *C, char* nomInstance){
 
-	SVGwriter* svg;
+	SVGwriter* svg =(SVGwriter*)malloc(sizeof(SVGwriter));
+	if(svg==NULL){
+		printf("\nallocation svg dans afficheChaineSVG echouée\n");
+		return;
+
+	}
+
 	SVGinit(svg, nomInstance, IMAGE_X, IMAGE_Y);
 	
 	//pour créer une ligne avec SVG on a besoin de 2 points, donc on stocke les coordonnées du point précédent
@@ -326,6 +377,7 @@ void afficheChaineSVG(Chaines *C, char* nomInstance){
 		while(cour2){
 
 			SVGpoint(svg, cour2->x, cour2->y); // on crée le point suivant prec
+			SVGlineRandColor(svg);
 			SVGline(svg, prec->x, prec->y, cour2->x, cour2->y); // on crée la ligne : le segment
 			
 			prec = cour2;
@@ -335,8 +387,15 @@ void afficheChaineSVG(Chaines *C, char* nomInstance){
 
 		cour=cour->suiv;
 	}
+	
 
+	SVGfinalize(svg);
 }
+
+/***************** fonctions intermédiaires *******************/
+
+
+/* calcule la longueur d'une structure CellChaine */
 
 double longueurChaine(CellChaine *c)
 {
@@ -351,7 +410,7 @@ double longueurChaine(CellChaine *c)
 	while(cour)
 	{
 		
-		longChaine += sqrt(pow(prec->x-cour->x,2)+pow(prec->y-cour->y,2));
+		//longChaine += sqrt(pow(prec->x-cour->x,2)+pow(prec->y-cour->y,2));
 		prec = cour;	
 		cour=cour->suiv;
 	}
@@ -359,21 +418,7 @@ double longueurChaine(CellChaine *c)
 	return longChaine;
 }
 
-double longueurTotale(Chaines* C)
-{
-	double longTotale=0;
-
-	CellChaine* cour = C->chaines;
-
-	while(cour)
-	{
-		longTotale += longueurChaine(cour);
-		cour=cour->suiv;
-	}
-
-	return longTotale;
-
-}
+/* Compte le nombre de points dans une structure CellChaine */
 
 int comptePoints(CellChaine* CC)
 {
@@ -392,6 +437,28 @@ int comptePoints(CellChaine* CC)
 	return nbPoints;
 
 }
+
+/******** fonctions faisant appel aux fonctions intermédiaires  **************/
+
+/* calcule la longueur d'une structure Chaines */
+
+double longueurTotale(Chaines* C)
+{
+	double longTotale=0;
+
+	CellChaine* cour = C->chaines;
+
+	while(cour)
+	{
+		longTotale += longueurChaine(cour);
+		cour=cour->suiv;
+	}
+
+	return longTotale;
+
+}
+
+/* Compte le nombre de points dans une structure Chaines */
 
 int comptePointsTotal(Chaines *C)
 {

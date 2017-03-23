@@ -32,11 +32,33 @@ typedef struct {
     CellCommodite *commodites;      /* Liste des commodites a relier */
 } Reseau;
 
+/* Fonctions ajoutées */
+
+Noeud* initialiser_Noeud(double x, double y);
+CellNoeud* initialiser_CellNoeud();
+CellNoeud* creer_cellNoeud(Noeud *N);
+int compteNbVoisins(CellNoeud *CN);
+CellCommodite* initialiser_CellCommodite(Noeud* N1, Noeud* N2);
+Reseau* initialiser_Reseau(int gamma, int num);
+CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y);
+CellCommodite* inserer_RCom_Com(CellCommodite *RCom, CellCommodite *Com);
+Noeud* recherche_CN_N(CellNoeud *CN, double x, double y);
+Noeud* recherche_N_N(Noeud N, double x, double y);
+Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y);
+Reseau* reconstitueReseauListe(Chaines* C);
+int nbCommodite(Reseau *R);
+int nbLiaison(Reseau *R);
+
+
+
+
 Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y);
 Reseau* reconstitueReseauListe(Chaines *C);
 void ecrireReseauTxt(Reseau *R, FILE *f);
 int nbLiaison(Reseau *R);
 int nbCommodite(Reseau *R);
 void afficheReseauSVG(Reseau *R, char* nomInstance);
+
+
 #endif
 

@@ -28,11 +28,20 @@ typedef struct {
 /* initialise et crée une structure CellPoint */
 CellPoint* initialiser_CP(double x, double y);
 
+/* Affiche une structure CellPoint */
+void afficher_CP( CellPoint *CP);
+
 /* initialise une structure CellChaine */
 CellChaine* initialiser_CC(int num);
 
+/* affiche une structure CellChaine */
+void afficher_CC( CellChaine *CC);
+
 /* initialise une structure Chaines */
 Chaines* initialiser_C(int gamma, int nbChaines);
+
+/* affiche une structure Chaines */
+void afficher_C( Chaines *C);
 
 /* Insère CellPoint dans CellChaine */
 CellChaine* inserer_CP_CC(CellChaine *CC, CellPoint *CP);
@@ -49,6 +58,14 @@ CellChaine* inserer_CC_lC( CellChaine* lC, CellChaine *CC);
 Chaines* lectureChaine(FILE *f);
 void ecrireChaineTxt(Chaines *C, FILE *f);
 void afficheChaineSVG(Chaines *C, char* nomInstance);
+
+/* fonctions intermédiaires */
+
+int comptePoints(CellChaine* CC);
+double longueurChaine(CellChaine *c);
+
+/* fonctions faisant appel aux fonctions intermédiaires */
+
 double longueurTotale(Chaines *C);
 int comptePointsTotal(Chaines *C);
 
