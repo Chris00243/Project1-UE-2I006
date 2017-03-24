@@ -1,0 +1,132 @@
+//3.2
+void ecrireReseauTxt(Reseau* R, FILE* f){
+	fprintf(f,"NbNoeuds: %d\n", R->nbNoeuds);
+	fprintf(f,"NbLiaison: %d\n", nbLiaison(R));
+	fprintf(f,"NbCommodite: %d\n", nbCommodite(R));
+	fprintf(f,"Gamma: %d\n\n", R->gamma);
+	
+	CellNoeud* cour=R->noeuds;
+	while(cour)
+	{
+		fprintf(f,"v %d %lf %lf\n", cour->nd->num, cour->nd->x, cour->nd->y);
+		cour=cour->suiv;
+	}
+	
+	fprintf("\n");
+	
+	cour=R->noeuds;
+	while(cour)
+	{
+		Noeud* depart=cour->nd;
+		//CellNoeud* cour2=cour->nd->voisins;
+		CellNoeud* cour2=depart->voisins;
+		while(cour2->voisins->suiv)
+		{
+			cour2=cour2->voisins->suiv;
+		}
+		fprintf(f,"l %d %d\n", depart->num, cour2->nd->num);
+		cour=cour->suiv;
+	}
+
+	fprintf("\n");
+
+	CellCommodite *cour=R->commodites;
+	while(cour)
+	{
+		fprintf(f,"k %d %d\n",cour->extrA->num, cour->extrB->num);
+		cour=cour->suiv;
+	}
+
+}
+
+//3.3
+void afficheReseauSVG(Reseau *R, char* nomInstance)
+{
+	SVG* svg;
+	SVGinit(svg,nomInstance,300,300);
+
+	CellNoeud* cour=R->noeuds;
+	while(cour)
+	{
+		//Noeud* depart=cour->nd;
+		Noeud* prec=cour->nd;
+		//SVGpoint(svg,depart->x,depart->y);
+		SVGpoint(svg,prec->x,prec->y);
+		//CellNoeud* cour2=cour->nd->voisins;
+		CellNoeud* cour2=depart->voisins;
+
+		if(cour2!=NULL)
+		{
+			SVGline(svg,prec->x,prec->y,cour2->nd->x,cour2->nd->y);
+		}
+		
+		while(cour2->voisins->suiv)
+		{
+			prec=cour2;
+			cour2=cour2->voisins->suiv;
+			SVGline(svg,prec->x,prec->y,cour2->nd->x,cour2->nd->y);
+		}
+		
+		SVGlineRandColor(svg);//donne une nouvelle couleur pour chaque nouvelle ligne de points créés
+		cour=cour->suiv;
+	}
+}
+
+
+
+//2.3
+
+int verifieExtension (char s[]) // verifie si on passe en argument un fichier cyber .glv
+{
+   int j;
+   int cpt = strlen (s);
+   for (j = 0; j < cpt - 3; j++)
+   {
+   }
+ 
+   if ((s[j] == 'c') && (s[j + 1] == 'h') && (s[j + 2] == 'a'))
+   {
+      return 1;
+   }
+   return 0;
+}
+
+//2ème version
+int verifieExtension(char s[]) // verifie si on passe en argument un fichier cyber .glv
+{
+   char *extension;
+   extension = strrchr(s,'.'); 
+ 
+   if ((extension[0] == '.') && (extension[1] == 'g') && (extension[2] == 'l') && (extension[3] == 'v'))
+   {
+      return 1;
+   }
+   return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+	if(argc!=2){
+		fprintf(stderr,"Nb d'arguments incorrect");
+		exit(1);
+	}
+
+	if (verifieExtension(argv[1]) != 1){
+		fprintf(stderr,"'%s' : format de fichier non correct,'.cha' uniquement\n",argv[1]);
+		exit(2);
+	}
+	
+	if(atoi(argv[2])<1 || atoi(argv[2])>3){
+		fprintf(stderr,"Le choix de la méthode est soit 1,2 ou 3\n",);
+		exit(3);
+	}
+
+	switch(atoi(argv[2]){
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+	}
