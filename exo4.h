@@ -17,7 +17,7 @@ TH* initialiser_TH(int n);
 
 /* Fonction qui initialise CellNoeud étant donné qu'elle comprend maintenant une varaible clef  Voir Reseau.h la structure CellNoeud */
 
-CellNoeud* initialiser_CellNoeud_avec_Clef(Noeud *N, int n);
+//CellNoeud* initialiser_CellNoeud_avec_Clef(Noeud *N, int n);
 
 /* la fonction qui retourne la clef */
 
@@ -26,6 +26,10 @@ int fonctionClef(Noeud* N, int n);
 /* la fonction qui transforme a clé en une valeur entière utilisable et permet d'eviter au maximum des collisions */
 
 int fonctionHachage(int clef, int n);
+
+/* Insertion des CellNoeud dans la table de Hachage à partir de leur clef */
+
+TH* inserer_CN_TH(TH *H, CellNoeud *CN);
 
 /* elle retourne un Noeud correspondant au point (x,y) de H sinon crée un Noeud de coordonnées (x,y) et l'ajoute dans H et aussi Dans R->noeuds  */
 

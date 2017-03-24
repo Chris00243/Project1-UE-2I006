@@ -14,7 +14,7 @@ TH* initialiser_TH(int n)
 
 	T->n = n;
 
-	T->Tab = (CellNoeud**)maloc(n*sizeof(CellNoeud*));
+	T->Tab = (CellNoeud**)malloc(n*sizeof(CellNoeud*));
 	if(T->Tab==NULL) return NULL;
 
 	int i;
@@ -34,16 +34,16 @@ TH* initialiser_TH(int n)
 
 
 /* Fonction qui initialise CellNoeud étant donné qu'elle comprend maintenant une varaible clef  Voir Reseau.h la structure CellNoeud */
-
+/*
 CellNoeud* initialiser_CellNoeud_avec_Clef(Noeud *N, int n)
 {
-	CellNoeud* CN = creer_cellNoeud(N);
+	CellNoeud* CN = creer_CellNoeud(N);
 	if(CN==NULL) return NULL;
 	CN->clef = fonctionClef(CN->nd, n);
 	return CN;
 }
 
-
+*/
 
 
 /********************************************************* LES FONCTIONS DE HACHAGE *************************************************************************/
@@ -53,7 +53,6 @@ CellNoeud* initialiser_CellNoeud_avec_Clef(Noeud *N, int n)
 int fonctionClef(Noeud* N, int n)
 {
 	return fonctionHachage( (int)( (N->y)+( (N->x + N->y)(N->x + N->y +1) )/2 ), n );
-
 }
 
 /* la fonction qui transforme a clé en une valeur entière utilisable et permet d'eviter au maximum des collisions */
@@ -68,12 +67,14 @@ int fonctionHachage(int clef, int n)
 /********************************************************* LES FONCTIONS INDISPENSABLES *************************************************************************/
 
 /* Insertion des CellNoeud dans la table de Hachage à partir de leur clef */
-void inserer_CN_TH(TH *H, CellNoeud *CN)
+TH* inserer_CN_TH(TH *H, CellNoeud *CN)
 {
-	if(H==NULL || CN==NULL) return;
+	if(H==NULL || CN==NULL) return NULL;
 	
-	CN->suiv = H->Tab[CN->clef];
-	H->Tab[CN->clef] = CN;
+	int clef=fonctionClef(CN->nd,H->n);
+
+	CN->suiv = H->Tab[clef];
+	H->Tab[clef] = CN;
 
 	return H;
 
@@ -86,14 +87,19 @@ void inserer_CN_TH(TH *H, CellNoeud *CN)
 
 Noeud* rechercheCreeNoeudHachage(Reseau *R, TH* H, double x, double y)
 {
-	for(i=0;i<H->n;i++){
-		
-		if(H->T[i]==NULL) continue;
+	Noeud *N=initialiser_Noeud(x,y);
+	int clef=fonctionClef(N,H->n);
 	
-		if(H->T[i]->nd->x == x && H->T[i]->nd->y == y) return H->T[i]->nd;
-				
-		CellNoeud *cour =  H->T[i]->suiv
+	
 
+	/*for(i=0;i<H->n;i++){
+		
+		if(H->T[i]==NULL) continue;//on passe à i++*/
+	
+		if(R->noeuds->nd->x==x && R->noeuds->nd->y==y)return nd;
+
+		CellNoeud *cour =  R->noeuds->suiv;
+		
 		while(cour){
 	
 			if(cour->nd->x == x && cour->nd->y == y) return cour->nd;
@@ -109,7 +115,6 @@ Noeud* rechercheCreeNoeudHachage(Reseau *R, TH* H, double x, double y)
 		printf("\nNoeud ajouté\n");
 		return C->nd; 	
 }	
-
 
 
 
