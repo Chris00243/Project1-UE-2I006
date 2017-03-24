@@ -193,9 +193,9 @@ Reseau* reconstitueReseauListe(Chaines* C)
 
 		if(CP!=NULL){
 
-			 Noeud *R = recherche_CN_N(R->noeuds, CP->x, CP->y);
+			 Noeud *B = recherche_CN_N(R->noeuds, CP->x, CP->y);
 
-			 if(R==NULL){
+			 if(B==NULL){
 	
 				N = creer_CellNoeud( initialiser_Noeud( CP->x, CP->y) );
 				
@@ -216,7 +216,7 @@ Reseau* reconstitueReseauListe(Chaines* C)
 				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extrA->nd, N->nd);
 
 			}else{
-				Noeud* extr = R;
+				Noeud* extr = B;
 				CP = CP->suiv;				
 		
 				while(CP){
