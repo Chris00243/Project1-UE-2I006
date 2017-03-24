@@ -87,8 +87,8 @@ Reseau* initialiser_Reseau(int gamma, int num)
 	return r;
 }
 
-/************* insérer un Noeud dans un CellNoeud ************/
-/* Cette fonction sera utilisée pour ajouter les noeuds voisins d'un noeud X. Il suffira donc de passer le X->voisins et les coordonées x, y du noeud à insérer */
+/************* insÃ©rer un Noeud dans un CellNoeud ************/
+/* Cette fonction sera utilisÃ©e pour ajouter les noeuds voisins d'un noeud X. Il suffira donc de passer le X->voisins et les coordonÃ©es x, y du noeud Ã  insÃ©rer */
 
 CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 {
@@ -111,7 +111,7 @@ CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 		return B;
 	}
 
-	printf("\nNoeud déjà stocké\n");
+	printf("\nNoeud dÃ©jÃ  stockÃ©\n");
 	return CN;
 
 }
@@ -151,7 +151,7 @@ Noeud* recherche_N_N(Noeud* N, double x, double y)
 
 		if(N->x==x && N->y==y){
 
-			printf("\nNoeud trouvé\n");
+			printf("\nNoeud trouvÃ©\n");
 			return N;
 		}
 
@@ -171,17 +171,16 @@ Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y)
 
 	R->nbNoeuds=NUM-1;
 	
-	printf("\nNoeud créé \n");
+	printf("\nNoeud crÃ©Ã© \n");
 	return C->nd;
 }
 
 /******* Reconstitution : Fonctions **************/
 
-/*
+
 Reseau* reconstitueReseauListe(Chaines* C)
 {
 	Reseau *R = initialiser_Reseau(C->gamma, comptePointsTotal(C));
-
 	CellChaine *CC = C->chaines;
 	CellPoint *CP = CC->points;
 	CellPoint *CP_voisins = CP->suiv;
@@ -193,7 +192,7 @@ Reseau* reconstitueReseauListe(Chaines* C)
 
 		if(CP!=NULL){
 
-			 Noeud *R = recherche_CN_N(R->noeuds, CP->x, CP->y);
+			 Noeud *B = recherche_CN_N(R->noeuds, CP->x, CP->y);
 
 			 if(R==NULL){
 	
@@ -205,42 +204,36 @@ Reseau* reconstitueReseauListe(Chaines* C)
 				while(CP){
 	
 					N->nd->voisins = inserer_CN_N( N->nd->voisins, CP->x, CP->y );
-
 					N = N->nd->voisins;
-
 					CP= CP->suiv;
 				}
 		
 				extrA->suiv = R->noeuds;
 				R->noeuds = extrA;
-				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extrA->nd, N->nd);
+				R->commodites = inserer_RCom_Com(R->commodites, initialiser_CellCommodite(extrA->nd, N->nd));
 
 			}else{
-				Noeud* extr = R;
+				Noeud* extr = B;
 				CP = CP->suiv;				
 		
 				while(CP){
 	
-					R->voisins = inserer_CN_N( R->voisins, CP->x, CP->y );
-
-					N = R->voisins;
-
+					B->voisins = inserer_CN_N( B->voisins, CP->x, CP->y );
+					N = B->voisins;
 					CP= CP->suiv;
 				}
 		
-				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extr, N->nd);
+				R->commodites = inserer_RCom_Com(R->commodites, initialiser_CellCommodite(extr, N->nd));
 			  }
    		}
-
 		CC = CC->suiv;
-
 	}
 
 	return R;
 }
-*/
 
-/* compte le nombre de commodités */
+
+/* compte le nombre de commoditÃ©s */
 
 int nbCommodite(Reseau *R)
 {
@@ -268,9 +261,7 @@ int nbLiaison(Reseau *R)
 
 		nbLiaison += compteNbVoisins(R->noeuds);
 		R->noeuds = R->noeuds->suiv;
-
 	}
-
-
+		return nbLiaison;
 }
 
