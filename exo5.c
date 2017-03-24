@@ -1,6 +1,5 @@
-
-
-/* initialise l'ArbreQuat */
+#include "exo5.h"
+* initialise l'ArbreQuat */
 
 ArbreQuat* creerArbreQuat(double xc, double yc, double coteX, double coteY)
 {
@@ -241,9 +240,3 @@ Reseau* recreeReseauArbre(Chaines* C)
 		}
 
 }
-
-
-
-
-
-

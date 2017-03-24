@@ -1,4 +1,4 @@
-
+#include "exo4.h" 
 #define A 0.618033989
 
 /************************************************** LES FONCTIONS DE LA STRUCTURE TH  *********************************************************/
@@ -29,10 +29,6 @@ TH* initialiser_TH(int n)
 
 }
 
-/* fonction non demandée : affiche la structure TH */
-
-void afficher_tableHachage_t( tableHachage_t *Tab);
-
 
 /************************************************** LES FONCTIONS DE LA STRUCTURE CellNoeud  *********************************************************/
 
@@ -48,21 +44,6 @@ CellNoeud* initialiser_CellNoeud_avec_Clef(Noeud *N, int n)
 }
 
 
-/************************************************** LES FONCTIONS DE LA STRUCTURE Reseau  *********************************************************/
-
-
-/* Fonction qui initialise le réseau étant donné que le réseau comprend maintenant une TH*   */
-
-Reseau* initialiser_Reseau_avec_TH(int gamma, int num, int n)
-{
-	Reseau* R = initialiser_Reseau(gamma,num);
-	if(R==NULL) return NULL;
-	R->H = initialiser_TH( n);
-	if(R->H==NULL) return NULL;
-
-	return R;
-
-}
 
 
 /********************************************************* LES FONCTIONS DE HACHAGE *************************************************************************/
@@ -94,6 +75,8 @@ void inserer_CN_TH(TH *H, CellNoeud *CN)
 	CN->suiv = H->Tab[CN->clef];
 	H->Tab[CN->clef] = CN;
 
+	return H;
+
 }
 
 
@@ -101,15 +84,15 @@ void inserer_CN_TH(TH *H, CellNoeud *CN)
 
 /* elle retourne un Noeud correspondant au point (x,y) de H sinon crée un Noeud de coordonnées (x,y) et l'ajoute dans H et aussi Dans R->noeuds  */
 
-Noeud* rechercheCreeNoeudHachage(Reseau *R, double x, double y)
+Noeud* rechercheCreeNoeudHachage(Reseau *R, TH* H, double x, double y)
 {
-	for(i=0;i<R->H->n;i++){
+	for(i=0;i<H->n;i++){
 		
-		if(R->H->T[i]==NULL) continue;
+		if(H->T[i]==NULL) continue;
 	
-		if(R->H->T[i]->nd->x == x && R->H->T[i]->nd->y == y) return R->H->T[i]->nd;
+		if(H->T[i]->nd->x == x && H->T[i]->nd->y == y) return H->T[i]->nd;
 				
-		CellNoeud *cour =  R->H->T[i]->suiv
+		CellNoeud *cour =  H->T[i]->suiv
 
 		while(cour){
 	
@@ -121,7 +104,7 @@ Noeud* rechercheCreeNoeudHachage(Reseau *R, double x, double y)
 		C->suiv = R->noeuds;
 		R->noeuds = C;
 		
-		inserer_CN_TH(R->H, C); 		// ajout dans la table de Hachage 
+		H = inserer_CN_TH(H, C); 		// ajout dans la table de Hachage 
 
 		printf("\nNoeud ajouté\n");
 		return C->nd; 	

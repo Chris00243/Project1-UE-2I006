@@ -1,8 +1,8 @@
 #ifndef EXO5_H
 #define EXO5_H
 
-#include "Reseau.h"
 
+#include "Reseau.h"
 
 /* arbre quaternaire contenant les noeuds du reseau */
 

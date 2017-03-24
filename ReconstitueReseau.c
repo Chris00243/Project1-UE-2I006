@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	if (verifieExtension(argv[1]) != 0{
+	if (verifieExtension(argv[1]) != 0){
 		fprintf(stderr,"'%s' : format de fichier non correct,'.cha' uniquement\n",argv[1]);
 		exit(2);
 	}
@@ -62,4 +62,4 @@ int main(int argc, char *argv[])
   
   return 0;
   
-  }
+}
