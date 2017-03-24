@@ -9,6 +9,9 @@ typedef struct noeud Noeud;
 typedef struct cellnoeud {
     Noeud *nd;               /* Pointeur vers le noeud stock\'e */
     struct cellnoeud *suiv;         /* Cellule suivante dans la liste */
+
+    int clef; /* Je l'ai ajouté, et sera utilisé pour l'exo4 : lors de la table de Hachage */
+
 } CellNoeud;
 
 /* Noeud du reseau */
@@ -30,6 +33,9 @@ typedef struct {
     int gamma;                      /* Nombre maximal de fibres par cable */
     CellNoeud *noeuds;              /* Liste des noeuds du reseau */
     CellCommodite *commodites;      /* Liste des commodites a relier */
+
+    TH* H; /* Table de Hachage ajouté et utilisé dans l' exo4 */
+	
 } Reseau;
 
 /* Fonctions ajoutées */

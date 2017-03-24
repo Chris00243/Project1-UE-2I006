@@ -88,6 +88,7 @@ Reseau* initialiser_Reseau(int gamma, int num)
 }
 
 /************* insérer un Noeud dans un CellNoeud ************/
+/* Cette fonction sera utilisée pour ajouter les noeuds voisins d'un noeud X. Il suffira donc de passer le X->voisins et les coordonées x, y du noeud à insérer */
 
 CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 {
@@ -166,7 +167,8 @@ Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y)
 	if(B!=NULL) return B;
 
 	CellNoeud *C = creer_CellNoeud( initialiser_Noeud(x, y) );
-	C->suiv = R->noeuds
+	C->suiv = R->noeuds;
+	R->noeuds = C;
 
 	R->nbNoeuds=NUM-1;
 	
