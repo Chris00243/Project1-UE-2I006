@@ -198,6 +198,12 @@ ArbreQuat* inserer_AB_AB(ArbreQuat *parent, ArbreQuat *a)
 
 }
 
+Reseau* recreeReseauArbre(Chaines* C)
+{
+	CellChaine
+
+}
+
 
 
 

@@ -2,6 +2,8 @@
 #define __RESEAU_H__
 
 #include "Chaine.h"
+#include "exo4.h"
+#include "exo5.h"
 
 typedef struct noeud Noeud;
 
@@ -35,7 +37,8 @@ typedef struct {
     CellCommodite *commodites;      /* Liste des commodites a relier */
 
     TH* H; /* Table de Hachage ajouté et utilisé dans l' exo4 */
-	
+    ArbreQuat *AB; /* Utilisé dans l'exo5 */
+
 } Reseau;
 
 /* Fonctions ajoutées */
