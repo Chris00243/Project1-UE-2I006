@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "Exo5.h"
-#include "Exo4.h"
-//#include "Reseau.h"
+//#include "Exo4.h"
+#include "Reseau.h"
 
 // verifie si on passe en argument un fichier .cha
 int verifieExtension(char* s) 
