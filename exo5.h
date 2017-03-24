@@ -43,4 +43,7 @@ ArbreQuat* inserer_AB_AB(ArbreQuat *parent, ArbreQuat *a);
 /* inserer un noeud dans un ArbreQuat */
 ArbreQuat* insererNoeudArbre(Noeud* n, ArbreQuat* a, ArbreQuat* parent);
 
+/* Reconstitution reseau */
+Reseau* recreeReseauArbre(Chaines* C);
+
 #endif
