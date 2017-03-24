@@ -87,8 +87,8 @@ Reseau* initialiser_Reseau(int gamma, int num)
 	return r;
 }
 
-/************* insérer un Noeud dans un CellNoeud ************/
-/* Cette fonction sera utilisée pour ajouter les noeuds voisins d'un noeud X. Il suffira donc de passer le X->voisins et les coordonées x, y du noeud à insérer */
+/************* insÃ©rer un Noeud dans un CellNoeud ************/
+/* Cette fonction sera utilisÃ©e pour ajouter les noeuds voisins d'un noeud X. Il suffira donc de passer le X->voisins et les coordonÃ©es x, y du noeud Ã  insÃ©rer */
 
 CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 {
@@ -111,7 +111,7 @@ CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 		return B;
 	}
 
-	printf("\nNoeud déjà stocké\n");
+	printf("\nNoeud dÃ©jÃ  stockÃ©\n");
 	return CN;
 
 }
@@ -152,7 +152,7 @@ Noeud* recherche_N_N(Noeud N, double x, double y)
 
 		if(N->x==x && N->y==y){
 
-			printf("\nNoeud trouvé\n");
+			printf("\nNoeud trouvÃ©\n");
 			return CN->nd;
 		}
 
@@ -172,7 +172,7 @@ Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y)
 
 	R->nbNoeuds=NUM-1;
 	
-	printf("\nNoeud créé \n");
+	printf("\nNoeud crÃ©Ã© \n");
 	return C->nd;
 }
 
@@ -239,7 +239,7 @@ Reseau* reconstitueReseauListe(Chaines* C)
 	return R;
 }
 
-/* compte le nombre de commodités */
+/* compte le nombre de commoditÃ©s */
 
 int nbCommodite(Reseau *R)
 {
@@ -273,3 +273,78 @@ int nbLiaison(Reseau *R)
 
 }
 
+/* ecrit les donnÃ©es d'un rÃ©seau et la liste des noeuds dans un fichier texte */
+								 
+void ecrireReseauTxt(Reseau* R, FILE* f){
+	fprintf(f,"NbNoeuds: %d\n", R->nbNoeuds);
+	fprintf(f,"NbLiaison: %d\n", nbLiaison(R));
+	fprintf(f,"NbCommodite: %d\n", nbCommodite(R));
+	fprintf(f,"Gamma: %d\n\n", R->gamma);
+	
+	CellNoeud* cour=R->noeuds;
+	while(cour)
+	{
+		fprintf(f,"v %d %lf %lf\n", cour->nd->num, cour->nd->x, cour->nd->y);
+		cour=cour->suiv;
+	}
+	
+	fprintf("\n");
+	
+	cour=R->noeuds;
+	while(cour)
+	{
+		Noeud* depart=cour->nd;
+		//CellNoeud* cour2=cour->nd->voisins;
+		CellNoeud* cour2=depart->voisins;
+		while(cour2->voisins->suiv)
+		{
+			cour2=cour2->voisins->suiv;
+		}
+		fprintf(f,"l %d %d\n", depart->num, cour2->nd->num);
+		cour=cour->suiv;
+	}
+
+	fprintf("\n");
+
+	CellCommodite *cour=R->commodites;
+	while(cour)
+	{
+		fprintf(f,"k %d %d\n",cour->extrA->num, cour->extrB->num);
+		cour=cour->suiv;
+	}
+
+}
+								 
+/* crÃ©e une image svg reprÃ©sentant un rÃ©seau donnÃ©*/
+
+void afficheReseauSVG(Reseau *R, char* nomInstance)
+{
+	SVG* svg;
+	SVGinit(svg,nomInstance,300,300);
+
+	CellNoeud* cour=R->noeuds;
+	while(cour)
+	{
+		//Noeud* depart=cour->nd;
+		Noeud* prec=cour->nd;
+		//SVGpoint(svg,depart->x,depart->y);
+		SVGpoint(svg,prec->x,prec->y);
+		//CellNoeud* cour2=cour->nd->voisins;
+		CellNoeud* cour2=depart->voisins;
+
+		if(cour2!=NULL)
+		{
+			SVGline(svg,prec->x,prec->y,cour2->nd->x,cour2->nd->y);
+		}
+		
+		while(cour2->voisins->suiv)
+		{
+			prec=cour2;
+			cour2=cour2->voisins->suiv;
+			SVGline(svg,prec->x,prec->y,cour2->nd->x,cour2->nd->y);
+		}
+		
+		SVGlineRandColor(svg);//donne une nouvelle couleur pour chaque nouvelle ligne de points crÃ©Ã©s
+		cour=cour->suiv;
+	}
+}
