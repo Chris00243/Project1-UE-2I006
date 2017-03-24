@@ -20,9 +20,9 @@ Noeud* initialiser_Noeud(double x, double y)
 	N->y=y;
 
 	N->voisins = initialiser_CellNoeud();
-	if(n->voisins==NULL) return NULL;	
+	if(N->voisins==NULL) return NULL;	
 		
-	return n;
+	return N;
 }
 
 /******* FONCTIONS CellNoeud ******************************************/
@@ -38,10 +38,10 @@ CellNoeud* initialiser_CellNoeud()
 	return CN;
 }
 
-CellNoeud* creer_cellNoeud(Noeud *N)
+CellNoeud* creer_CellNoeud(Noeud *N)
 {
-	CellNoeud *CN = initialiser_cellNoeud();
-	Cn->nd = N;
+	CellNoeud *CN = initialiser_CellNoeud();
+	CN->nd = N;
 	return CN;
 }
 
@@ -97,12 +97,12 @@ CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y)
 	if(CN->nd==NULL){
 
 		B = creer_CellNoeud( initialiser_Noeud(x,y) );
-		CN->nd=B;
+		CN->nd=B->nd;
 		return CN;
 		
 	}
 
-	B = recherche_CN_N(CN, x, y);
+	B->nd = recherche_CN_N(CN, x, y);
 
 	if(B==NULL){
 
@@ -129,7 +129,6 @@ CellCommodite* inserer_RCom_Com(CellCommodite *RCom, CellCommodite *Com)
 Noeud* recherche_CN_N(CellNoeud *CN, double x, double y)
 {
 
-	
 	Noeud *B = NULL;
 	
 	while(CN){
@@ -144,7 +143,7 @@ Noeud* recherche_CN_N(CellNoeud *CN, double x, double y)
 	return B;
 }
 
-Noeud* recherche_N_N(Noeud N, double x, double y)
+Noeud* recherche_N_N(Noeud* N, double x, double y)
 {
 	while(N){
 
@@ -153,7 +152,7 @@ Noeud* recherche_N_N(Noeud N, double x, double y)
 		if(N->x==x && N->y==y){
 
 			printf("\nNoeud trouvé\n");
-			return CN->nd;
+			return N;
 		}
 
 		recherche_CN_N(N->voisins, x, y);	
@@ -177,7 +176,8 @@ Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y)
 }
 
 /******* Reconstitution : Fonctions **************/
- 
+
+/*
 Reseau* reconstitueReseauListe(Chaines* C)
 {
 	Reseau *R = initialiser_Reseau(C->gamma, comptePointsTotal(C));
@@ -193,9 +193,9 @@ Reseau* reconstitueReseauListe(Chaines* C)
 
 		if(CP!=NULL){
 
-			 Noeud *B = recherche_CN_N(R->noeuds, CP->x, CP->y);
+			 Noeud *R = recherche_CN_N(R->noeuds, CP->x, CP->y);
 
-			 if(B==NULL){
+			 if(R==NULL){
 	
 				N = creer_CellNoeud( initialiser_Noeud( CP->x, CP->y) );
 				
@@ -216,7 +216,7 @@ Reseau* reconstitueReseauListe(Chaines* C)
 				R->commodites = inserer_RCom_Com(R->commodites, initialiser_cellCommodite(extrA->nd, N->nd);
 
 			}else{
-				Noeud* extr = B;
+				Noeud* extr = R;
 				CP = CP->suiv;				
 		
 				while(CP){
@@ -238,6 +238,7 @@ Reseau* reconstitueReseauListe(Chaines* C)
 
 	return R;
 }
+*/
 
 /* compte le nombre de commodités */
 
