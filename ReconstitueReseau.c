@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	}
 	
 	if(atoi(argv[2])<1 || atoi(argv[2])>3){
-		fprintf(stderr,"Le choix de la méthode est soit 1,2 ou 3\n",);
+		fprintf(stderr,"Le choix de la méthode est soit 1,2 ou 3\n");
 		exit(3);
 	}
   
@@ -43,18 +43,19 @@ int main(int argc, char *argv[])
   
   FILE* f=fopen(argv[1],"r");
   Chaines* C=lectureChaine(f);
+  Reseau* R=malloc(sizeof(Reseau));
   
 	switch(atoi(argv[2])){
 		case 1: printf("Par liste chainee\n\n");
-            Reseau* R=reconstitueReseauListe(C);
+            R=reconstitueReseauListe(C);
             afficheReseauSVG(R,"V1");
 			break;
 		case 2: printf("Par Hachage\n\n");
-            Reseau* R=recreeReseauHachage(C);
+            R=recreeReseauHachage(C);
             afficheReseauSVG(R,"V2");
 			break;
 		case 3: printf("Par arbre quaternaire\n\n");
-            Reseau* R=recreeReseauArbre(C);
+            R=recreeReseauArbre(C);
             afficheReseauSVG(R,"V3");
 			break;
 	}
