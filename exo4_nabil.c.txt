@@ -1,0 +1,64 @@
+Noeud* rechercheCreeNoeudHachage(Reseau *R, TH* H, double x, double y) 
+{ 
+ 	Noeud *N=initialiser_Noeud(x,y); //initialisation d'un noeud
+ 	int clef=fonctionClef(N,H->n); //génération de la clef
+	
+	if(H->Tab[clef]->nd->x == x && H->Tab[clef]->nd->y == y) return H->Tab[clef]->nd;
+
+	CellNoeud *cour=H->Tab[clef]->suiv;//on pointe directement sur l'élément suivant de la liste chaînée à la case indice "clef"
+
+	while(cour){
+		if(cour->nd->x == x && cour->nd->y == y) return cour->nd;
+		cour=cour->suiv;
+	}
+
+	CellNoeud* CN=creer_CellNoeud(Noeud *N);//créer un CellNoeud
+
+	inserer_CN_TH(H,CN);//insère le nouveau CellNoeud dans la liste chaînée à l'indice "clef" de la Table de Hachage
+
+	CN->suiv=R->noeuds;//on l'insère aussi dans le Réseau puisqu'il n'existait pas dans la table de Hachage
+	R->noeuds=CN;
+
+	printf("\nNoeud ajouté\n"); 
+ 	return N; 	
+
+}	 
+
+Reseau* recreeReseauHachage(Chaines* C){
+	Reseau* R=initialiser_Reseau(C->gamma,comptePointsTotal(C));
+	
+	int n;
+	printf("Donner une taille pour la table de hachage:\n");
+	scanf("%d",&n);	
+
+	TH* H=initialiser_TH(n);
+
+	CellChaine *CC = C->chaines; 
+ 	CellPoint *CP = CC->points; 
+ 	CellPoint *CP_voisins;
+
+	Noeud* N;	
+	CellNoeud* CN;	
+
+	while(CC){
+		while(CP){
+			N=rechercheCreeNoeudHachage(R,H,CP->x,CP->y);
+			
+			CP_voisins = CP->suiv;
+			//ici on va insérer le noeud N dans une CN qui sera rajouté en tête donc, on pointe directement sur R->noeuds, voir la fonction rechercheCreeNoeudHachage)
+			while(CP_voisins){
+				inserer_CN_N(R->noeuds,CP_voisins->x,CP->voisins->y);//on peut insérer les noeuds directement dans le 1er CN du Réseau
+				CP_voisins=CP_voisins->suiv;
+			}
+			CP=CP->suiv;	
+		}
+	CC=CC->suiv;
+
+	}
+	
+
+	return R;
+
+}
+
+	
