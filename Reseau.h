@@ -2,6 +2,7 @@
 #define __RESEAU_H__
 
 #include "Chaine.h"
+#include "exo4.h"  // ajouté du fait qu'on a ajouté une table de HAchage dans la structure Reseau, qui sera utilisé à l'exo4
 
 typedef struct noeud Noeud;
 
@@ -34,21 +35,22 @@ typedef struct {
     CellNoeud *noeuds;              /* Liste des noeuds du reseau */
     CellCommodite *commodites;      /* Liste des commodites a relier */
 
+    TH* H; /* Table de Hachage ajouté et utilisé dans l' exo4 */
+	
 } Reseau;
-
 
 /* Fonctions ajoutées */
 
 Noeud* initialiser_Noeud(double x, double y);
 CellNoeud* initialiser_CellNoeud();
-CellNoeud* creer_CellNoeud(Noeud *N);
+CellNoeud* creer_cellNoeud(Noeud *N);
 int compteNbVoisins(CellNoeud *CN);
 CellCommodite* initialiser_CellCommodite(Noeud* N1, Noeud* N2);
 Reseau* initialiser_Reseau(int gamma, int num);
 CellNoeud* inserer_CN_N(CellNoeud* CN, double x, double y);
 CellCommodite* inserer_RCom_Com(CellCommodite *RCom, CellCommodite *Com);
 Noeud* recherche_CN_N(CellNoeud *CN, double x, double y);
-Noeud* recherche_N_N(Noeud *N, double x, double y);
+Noeud* recherche_N_N(Noeud N, double x, double y);
 Noeud* rechercheCreeNoeudListe(Reseau *R, double x, double y);
 Reseau* reconstitueReseauListe(Chaines* C);
 int nbCommodite(Reseau *R);
@@ -66,5 +68,4 @@ void afficheReseauSVG(Reseau *R, char* nomInstance);
 
 
 #endif
-
 

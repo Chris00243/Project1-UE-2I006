@@ -1,4 +1,6 @@
-#include "exo5.h"
+
+
+/* initialise l'ArbreQuat */
 
 ArbreQuat* creerArbreQuat(double xc, double yc, double coteX, double coteY)
 {
@@ -152,8 +154,7 @@ ArbreQuat* inserer_AB_AB(ArbreQuat *parent, ArbreQuat *a)
 }
 
 
-/* inserer un noeud dans un ArbreQuat */
-ArbreQuat* insererNoeudArbre(Noeud* n, ArbreQuat* a, ArbreQuat* parent);
+
 {
 
 	if(a==NULL){
@@ -197,47 +198,8 @@ ArbreQuat* insererNoeudArbre(Noeud* n, ArbreQuat* a, ArbreQuat* parent);
 
 }
 
-/* Reconstitution reseau */
-Reseau* recreeReseauArbre(Chaines* C)
-{
-	CellChaine *CC = C->chaines;
-	
-	Cellpoint *CP = CC->points;
 
-	// calcul des minimales et maximales
 
-	double xmin, xmax, ymin, ymax;
 
-	chaineCoordMinMax(C, &xmin, &ymin, &xmax, &ymax);
 
-	// détermination des coordonées du centre 
 
-		double xc, yc;
-		xc = (xmax-xmin)/2;
-		yc = (ymax-ymin)/2;
-	// déterminnation de la hauteur et la longueur
-
-		double coteX, coteY;
-		coteX=xmax+xmin;
-		coteY=ymax+ymin;
-		
-		ArbreQuat*parent = creerArbreQuat(xc,yc,coteX,coteY);
-
-		while(CC){
-			
-			while(CP){
-
-				ArbreQuat* a;
-
-				insererNoeudArbre(initialiser_Noeud(CP->x, CP->y), a, parent);
-				
-				CP = CP->suiv;
-			
-			}
-			
-			CC = CC->suiv;		
-		}
-
-		
-
-}
