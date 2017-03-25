@@ -1,0 +1,72 @@
+#define MAX 10000
+
+//5.1
+void chaineCoordMinMax(Chaines* C, double* xmin, double* ymin, double* xmax, double* ymax){
+	
+	*xmin=MAX;
+	*ymin=MAX;
+	
+	*xmax=0;
+	*ymax=0;	
+
+	CellChaine* CC=C->chaines;
+	CellPoint* CP;
+
+	while(CC){
+		CP=CC->points;
+		while(CP)
+		{
+			if(*xmin>CP->x)*xmin=CP->x;//si xmin est supérieure à la valeur de x de CP, c-a-d, qu'il n'est pas le min
+
+			if(*ymin>CP->y)*ymin=CP->y;//si ymin est supérieure à la valeur de y de CP, c-a-d, qu'il n'est pas le min
+			
+			if(*xmax<CP->x)*xmax=CP->x;//si xmax est inférieure à la valeur de x de CP, c-a-d, qu'il n'est pas le max
+
+			if(*ymax>CP->y)*ymax=CP->y;//si ymax est inférieure à la valeur de y de CP, c-a-d, qu'il n'est pas le max
+
+			CP=CP->suiv;
+		}
+		
+		CC=CC->suiv;
+	}
+}
+
+//5.3, pas fini
+ArbreQuat* insererNoeudArbre(Noeud* n,ArbreQuat* a,ArbreQuat* parent){
+
+	if(a==NULL){
+		
+		a=creerArbreQuat(n->x,n->y,parent->coteX,parent->coteY);
+		a->noeud=n;
+		
+		//insertion dans la partie Nord-Est		
+		if(n->x > parent->xc && n->y > parent->yc){
+			parent->ne=a;
+		}
+		//insertion dans la partie Nord-Ouest
+		if(n->x < parent->xc && n->y > parent->yc){
+			parent->no=a;
+		}
+		//insertion dans la partie Sud-Est
+		if(n->x > parent->xc && n->y < parent->yc){
+			parent->se=a;
+		}
+		//insertion dans la partie Sud-Ouest
+		if(n->x < parent->xc && n->y < parent->yc){
+			parent->so=a;
+		}
+		
+		return parent;
+	}
+	
+	if(a->noeud!=NULL){
+		
+
+		insererNoeudArbre(
+
+
+
+
+	}
+
+}
